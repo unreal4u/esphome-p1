@@ -2,7 +2,7 @@ substitutions:
   device_name: p1-dongle-pro-h2o
   device_description: "P1 Dongle Pro + H2O counter"
   friendly_name: P1 Dongle Pro H2O
-  prj_version: "2024.08.01"
+  prj_version: "2026.05.01"
 
 esphome:
   name: ${device_name}
@@ -16,6 +16,8 @@ esphome:
     
 esp32:
   board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
   
 improv_serial:
   next_url: http://{{ip_address}}
@@ -66,23 +68,25 @@ uart:
   baud_rate: 115200
   rx_buffer_size: 1700
   
+  
 light:
   - platform: status_led
     name: "status led"
     output: status_output
     internal: true
-  - platform: neopixelbus
-    variant: WS2812
-    pin: 8
+  - platform: esp32_rmt_led_strip
+    pin:
+      number: 8
+      ignore_strapping_warning: true
     num_leds: 1
     name: "_Status LED"
     id: esp32c3_rgb_led
-    entity_category: config
-    restore_mode: ALWAYS_OFF
+    chipset: WS2812
+    rgb_order: GRB
     internal: true
-#     method:
-#       type: esp32_rmt
-#       channel: 0  
+    restore_mode: ALWAYS_OFF
+    entity_category: config
+    gamma_correct: false 
 
 switch:
   - platform: template
@@ -135,6 +139,7 @@ binary_sensor:
     pin:
       number: 9
       inverted: true
+      ignore_strapping_warning: true
       mode:
         input: true
         pullup: true
