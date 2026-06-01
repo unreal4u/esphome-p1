@@ -71,6 +71,11 @@ dsmr:
  water_mbus_id: 2
 #  crc_check: false #dsmr2
 
+globals:
+  - id: current_tariff_global
+    type: std::string
+    initial_value: '"unknown"'
+
 button:  
   - platform: restart
     name: "_Restart device"
@@ -230,6 +235,24 @@ text_sensor:
         name: "Gas meter ID"
 #     equipment_id:
 #         name: "Smart meter ID"
+    electricity_tariff:
+      name: "Internal tariff"
+      internal: True
+      on_value:
+        then:
+          - lambda: |-
+              if (x == "0001") {
+                id(current_tariff_global) = "low";
+              } else if (x == "0002") {
+                id(current_tariff_global) = "normal";
+              } else {
+                id(current_tariff_global) = "unknown";
+              }
+  - platform: template
+    name: "Current Tariff"
+    icon: "mdi:transmission-tower"
+    lambda: |-
+      return id(current_tariff_global);
   - platform: version
     name: "_ESPHome Version"
     hide_timestamp: true
