@@ -253,6 +253,15 @@ text_sensor:
     icon: "mdi:transmission-tower"
     lambda: |-
       return id(current_tariff_global);
+  - platform: template
+    name: "Current Tariff (parsed)"
+    icon: "mdi:transmission-tower"
+    lambda: |-
+      std::string s = id(current_tariff_global);
+      if (!s.empty()) {
+        s[0] = ::toupper(s[0]);
+      }
+      return s;
   - platform: version
     name: "_ESPHome Version"
     hide_timestamp: true
